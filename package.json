@@ -1,0 +1,25 @@
+{
+  "name": "web-component-hooks-workspace",
+  "version": "1.0.0",
+  "description": "Hybrid Angular 10 to Angular 20 migration proof-of-concept using Web Components",
+  "private": true,
+  "scripts": {
+    "start:legacy": "cd apps/main-legacy-app && npm start",
+    "start:element": "cd apps/investor-detail-element && npm start",
+    "build:legacy": "cd apps/main-legacy-app && npm run build",
+    "build:element": "cd apps/investor-detail-element && npm run build:elements",
+    "build:all": "npm run build:legacy && npm run build:element"
+  },
+  "keywords": [
+    "angular",
+    "web-components",
+    "angular-elements",
+    "migration",
+    "hybrid"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
