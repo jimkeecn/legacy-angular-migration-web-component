@@ -6,24 +6,24 @@ import {
   AfterViewInit,
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { InvestorService, InvestorDetail } from "../services/investor.service";
+import { UserService, User } from "../services/user.service";
 import { WebComponentLoaderService } from "../services/web-component-loader.service";
 
 @Component({
-  selector: "app-investor-detail-element-wrapper",
+  selector: "app-user-management-element-wrapper",
   template: `
     <div class="wrapper-container">
       <div class="wrapper-header">
-        <button (click)="goBack()" class="back-btn">← Back to Lookup</button>
-        <h2>Investor Details (Angular 20 Web Component)</h2>
+        <button (click)="goBack()" class="back-btn">← Back to Home</button>
+        <h2>User Management (Angular 20 Web Component)</h2>
         <button (click)="switchToLegacy()" class="switch-btn">
-          Switch to Angular 10 ⚡
+          Switch to Legacy ⚡
         </button>
       </div>
 
       <div class="new-banner">
         <span
-          >✨ This is the NEW Angular 20 version loaded as a Web
+          >✨ This is the NEW Angular 20 version with ag-Grid loaded as a Web
           Component!</span
         >
       </div>
@@ -39,17 +39,17 @@ import { WebComponentLoaderService } from "../services/web-component-loader.serv
       </div>
 
       <!-- Web Component will be rendered here -->
-      <investor-detail-element
-        *ngIf="!loading && !error && investorData"
+      <user-management-element
+        *ngIf="!loading && !error && userData"
         #webComponent
       >
-      </investor-detail-element>
+      </user-management-element>
     </div>
   `,
   styles: [
     `
       .wrapper-container {
-        max-width: 900px;
+        max-width: 1400px;
         margin: 0 auto;
       }
 
@@ -142,49 +142,40 @@ import { WebComponentLoaderService } from "../services/web-component-loader.serv
         background-color: #dc2626;
       }
 
-      investor-detail-element {
+      user-management-element {
         display: block;
         margin: 20px 0;
       }
     `,
   ],
 })
-export class InvestorDetailElementWrapperComponent
+export class UserManagementElementWrapperComponent
   implements OnInit, AfterViewInit
 {
   @ViewChild("webComponent", { read: ElementRef }) webComponent?: ElementRef;
 
-  investorId: string | null = null;
-  investorData: InvestorDetail | undefined;
-  investorDataJson: string = "";
+  userData: User[] = [];
+  userDataJson: string = "";
   loading = true;
   error: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private investorService: InvestorService,
+    private userService: UserService,
     private webComponentLoader: WebComponentLoaderService
   ) {}
 
   ngOnInit() {
-    this.route.parent?.params.subscribe((params) => {
-      this.investorId = params["id"];
+    // Load user data from service
+    this.userData = this.userService.getAllUsers();
 
-      // Load investor data from service
-      if (this.investorId) {
-        this.investorData = this.investorService.getInvestorById(
-          this.investorId
-        );
-
-        if (this.investorData) {
-          // Convert to JSON string for passing to web component
-          this.investorDataJson = JSON.stringify(this.investorData);
-        } else {
-          this.error = `Investor not found with ID: ${this.investorId}`;
-        }
-      }
-    });
+    if (this.userData && this.userData.length > 0) {
+      // Convert to JSON string for passing to web component
+      this.userDataJson = JSON.stringify(this.userData);
+    } else {
+      this.error = "No user data available";
+    }
 
     this.loadWebComponent();
   }
@@ -195,16 +186,16 @@ export class InvestorDetailElementWrapperComponent
       this.error = null;
 
       // Use the shared service to load web component scripts
-      await this.webComponentLoader.loadWebComponent("investor-detail");
+      await this.webComponentLoader.loadWebComponent("user-management");
 
       // Verify custom element is defined
-      this.webComponentLoader.isCustomElementDefined("investor-detail-element");
+      this.webComponentLoader.isCustomElementDefined("user-management-element");
 
       this.loading = false;
 
-      // After loading completes and element renders, set the data
+      // Set the data on the element
       setTimeout(() => {
-        this.setInvestorDataOnElement();
+        this.setUserDataOnElement();
       }, 100);
     } catch (err) {
       console.error("Failed to load web component:", err);
@@ -215,13 +206,11 @@ export class InvestorDetailElementWrapperComponent
   }
 
   goBack() {
-    this.router.navigate(["/investor-lookup"]);
+    this.router.navigate(["/"]);
   }
 
   switchToLegacy() {
-    if (this.investorId) {
-      this.router.navigate(["/investor-detail", this.investorId, "legacy"]);
-    }
+    this.router.navigate(["/user-management"]);
   }
 
   retry() {
@@ -229,16 +218,15 @@ export class InvestorDetailElementWrapperComponent
   }
 
   ngAfterViewInit() {
-    // This runs too early (before loading=false), so we use setTimeout in loadWebComponent instead
-    console.log("🔧 ngAfterViewInit called (element not ready yet)");
+    // Element not ready yet
   }
 
-  private setInvestorDataOnElement() {
+  private setUserDataOnElement() {
     // Use the shared service to set data on the element
     this.webComponentLoader.setElementData(
-      "investor-detail-element",
-      "investorData",
-      this.investorDataJson
+      "user-management-element",
+      "userData",
+      this.userDataJson
     );
   }
 }

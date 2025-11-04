@@ -1,0 +1,193 @@
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
+
+@Injectable({
+  providedIn: "root",
+})
+export class WebComponentLoaderService {
+  private loadedScripts = new Set<string>();
+
+  /**
+   * Load the Angular 20 web component scripts
+   * @param componentName Optional name for logging purposes
+   * @returns Promise that resolves when scripts are loaded
+   */
+  async loadWebComponent(componentName?: string): Promise<void> {
+    try {
+      // Always reload scripts during development
+      const forceReload = !environment.production;
+
+      if (this.loadedScripts.size === 0 || forceReload) {
+        const baseUrl = environment.webComponentUrl;
+        const timestamp = new Date().getTime();
+
+        // Remove old scripts if they exist (for reload)
+        if (forceReload) {
+          this.removeExistingScripts();
+        }
+
+        // With zone.js removed from Angular 20 build, we only need main.js
+        // The polyfills.js might still exist but should be empty or minimal
+        // We'll try to load it but continue if it fails
+        try {
+          await this.loadScript(
+            "wc-polyfills",
+            `${baseUrl}/browser/polyfills.js?v=${timestamp}`,
+            true // optional - don't fail if missing
+          );
+          console.log("✅ Polyfills loaded (if present)");
+        } catch (e) {
+          console.log(
+            "ℹ️ No polyfills file or already loaded (expected after zone.js removal)"
+          );
+        }
+
+        // Load the main application file (required)
+        await this.loadScript(
+          "wc-main",
+          `${baseUrl}/browser/main.js?v=${timestamp}`,
+          false // required
+        );
+
+        this.loadedScripts.add("wc-main");
+
+        // Wait for custom elements to register
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        console.log(
+          `✅ Web component scripts loaded${
+            componentName ? ` for ${componentName}` : ""
+          }`
+        );
+      } else {
+        console.log("ℹ️ Web component scripts already loaded");
+      }
+    } catch (err) {
+      console.error("Failed to load web component:", err);
+      throw new Error(
+        "Failed to load the Angular 20 web component. Please ensure the component server is running on port 4201."
+      );
+    }
+  }
+
+  /**
+   * Load a script dynamically
+   * @param id Unique ID for the script element
+   * @param src Script source URL
+   * @param optional If true, don't throw error if script fails to load
+   */
+  private loadScript(
+    id: string,
+    src: string,
+    optional: boolean = false
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Check if already loaded
+      const existing = document.getElementById(id);
+      if (existing) {
+        console.log(`Script ${id} already loaded`);
+        resolve();
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.id = id;
+      script.src = src;
+      script.type = "module"; // Important: use type="module" for ES modules
+      script.crossOrigin = "anonymous";
+
+      script.onload = () => {
+        console.log(`✅ Script loaded: ${src}`);
+        resolve();
+      };
+
+      script.onerror = (error) => {
+        console.error(`❌ Script load error: ${src}`, error);
+
+        if (optional) {
+          console.log(`ℹ️ Optional script failed to load, continuing: ${src}`);
+          resolve(); // Don't fail for optional scripts
+        } else {
+          reject(new Error(`Failed to load required script: ${src}`));
+        }
+      };
+
+      document.head.appendChild(script); // Append to head for modules
+    });
+  }
+
+  /**
+   * Remove existing web component scripts from DOM
+   */
+  private removeExistingScripts(): void {
+    const scriptIds = ["wc-polyfills", "wc-main"];
+    scriptIds.forEach((id) => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.remove();
+        this.loadedScripts.delete(id);
+        console.log(`🗑️ Removed script: ${id}`);
+      }
+    });
+  }
+
+  /**
+   * Verify that a custom element is registered
+   * @param tagName The custom element tag name
+   * @returns true if element is defined
+   */
+  isCustomElementDefined(tagName: string): boolean {
+    const isDefined = !!customElements.get(tagName);
+    if (isDefined) {
+      console.log(`✅ Custom element '${tagName}' is defined`);
+    } else {
+      console.warn(`⚠️ Custom element '${tagName}' not found`);
+    }
+    return isDefined;
+  }
+
+  /**
+   * Set data on a custom element using multiple approaches
+   * @param selector The element selector
+   * @param propertyName The property name (camelCase)
+   * @param data The data to set (will be stringified if object)
+   */
+  setElementData(selector: string, propertyName: string, data: any): boolean {
+    const element = document.querySelector(selector);
+
+    if (!element) {
+      console.warn(`⚠️ Element not found: ${selector}`);
+      return false;
+    }
+
+    const dataStr = typeof data === "string" ? data : JSON.stringify(data);
+    const kebabName = this.camelToKebab(propertyName);
+
+    // Try multiple approaches to set the data
+    // Approach 1: Direct property (camelCase)
+    (element as any)[propertyName] = dataStr;
+
+    // Approach 2: Try with kebab-case name
+    (element as any)[kebabName] = dataStr;
+
+    // Approach 3: setAttribute
+    element.setAttribute(kebabName, dataStr);
+
+    console.log(`✅ Data set on ${selector} via property '${propertyName}'`);
+    return true;
+  }
+
+  /**
+   * Convert camelCase to kebab-case
+   */
+  private camelToKebab(str: string): string {
+    return str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+  }
+
+  /**
+   * Reset the service state (useful for testing)
+   */
+  reset(): void {
+    this.loadedScripts.clear();
+  }
+}

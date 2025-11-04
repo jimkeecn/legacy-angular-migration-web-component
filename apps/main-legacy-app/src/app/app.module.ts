@@ -12,6 +12,7 @@ import { InvestorDetailLegacyComponent } from "./investor-detail/investor-detail
 import { InvestorDetailElementWrapperComponent } from "./investor-detail-element-wrapper/investor-detail-element-wrapper.component";
 import { UserManagementComponent } from "./user-management/user-management.component";
 import { UserManagementWrapperComponent } from "./user-management-wrapper/user-management-wrapper.component";
+import { UserManagementElementWrapperComponent } from "./user-management-element-wrapper/user-management-element-wrapper.component";
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { UserManagementWrapperComponent } from "./user-management-wrapper/user-m
     InvestorDetailElementWrapperComponent,
     UserManagementComponent,
     UserManagementWrapperComponent,
+    UserManagementElementWrapperComponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, AgGridModule],
   providers: [],
