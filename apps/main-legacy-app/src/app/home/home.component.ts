@@ -20,6 +20,13 @@ import { Router } from "@angular/router";
           <button class="card-btn">View Investors →</button>
         </div>
 
+        <div class="feature-card" (click)="navigateTo('/user-management')">
+          <div class="card-icon">👥</div>
+          <h3>User Management</h3>
+          <p>View and manage system users with ag-Grid</p>
+          <button class="card-btn">Manage Users →</button>
+        </div>
+
         <div class="feature-card demo-card">
           <div class="card-icon">⚡</div>
           <h3>Version Comparison</h3>
@@ -59,6 +66,10 @@ import { Router } from "@angular/router";
             <a (click)="navigateTo('/investor-lookup')" class="quick-link">
               <span class="link-icon">🔍</span>
               <span>Investor Lookup</span>
+            </a>
+            <a (click)="navigateTo('/user-management')" class="quick-link">
+              <span class="link-icon">👥</span>
+              <span>User Management</span>
             </a>
             <a (click)="navigateTo('/login')" class="quick-link">
               <span class="link-icon">🔐</span>
