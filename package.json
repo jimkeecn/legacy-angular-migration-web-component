@@ -8,7 +8,13 @@
     "start:element": "cd apps/investor-detail-element && npm start",
     "build:legacy": "cd apps/main-legacy-app && npm run build",
     "build:element": "cd apps/investor-detail-element && npm run build:elements",
-    "build:all": "npm run build:legacy && npm run build:element"
+    "build:all": "npm run build:legacy && npm run build:element",
+    "build:prod": "npm run build:element:prod && npm run build:legacy:prod",
+    "build:element:prod": "cd apps/investor-detail-element && npm run build",
+    "build:legacy:prod": "cd apps/main-legacy-app && SET NODE_OPTIONS=--openssl-legacy-provider && npm run build -- --configuration production",
+    "serve:prod": "npm run serve:element:prod & npm run serve:legacy:prod",
+    "serve:element:prod": "cd apps/investor-detail-element && npm run serve:dist",
+    "serve:legacy:prod": "http-server ./dist/main-legacy-app -p 4206 --cors -o"
   },
   "keywords": [
     "angular",
@@ -20,6 +26,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "http-server": "^14.1.1"
   }
 }

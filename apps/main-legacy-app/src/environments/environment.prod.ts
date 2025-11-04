@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  webComponentUrl: "/investor-detail-element",
+  webComponentUrl: "http://localhost:4205",
 };

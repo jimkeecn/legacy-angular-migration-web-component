@@ -65,7 +65,7 @@ export class WebComponentLoaderService {
     } catch (err) {
       console.error("Failed to load web component:", err);
       throw new Error(
-        "Failed to load the Angular 20 web component. Please ensure the component server is running on port 4201."
+        "Failed to load the Angular 20 web component. Please ensure the component server is running."
       );
     }
   }
