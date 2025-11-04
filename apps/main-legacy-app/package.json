@@ -20,6 +20,7 @@
     "@angular/router": "~10.2.5",
     "ag-grid-angular": "^25.3.0",
     "ag-grid-community": "^25.3.0",
+    "ng-zorro-antd": "^10.2.2",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
