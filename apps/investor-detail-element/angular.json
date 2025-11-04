@@ -75,6 +75,97 @@
           "options": {
             "port": 4201
           }
+        },
+        "build-investor": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "../../dist/web-components/investor-detail",
+            "index": "src/index.html",
+            "browser": "src/main-investor.ts",
+            "polyfills": [],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": ["src/styles.scss"],
+            "scripts": [],
+            "outputHashing": "none",
+            "optimization": true,
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2MB",
+                "maximumError": "5MB"
+              }
+            ]
+          }
+        },
+        "build-user": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "../../dist/web-components/user-management",
+            "index": "src/index.html",
+            "browser": "src/main-user.ts",
+            "polyfills": [],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss",
+              "node_modules/ag-grid-community/styles/ag-grid.css",
+              "node_modules/ag-grid-community/styles/ag-theme-alpine.css"
+            ],
+            "scripts": [],
+            "outputHashing": "none",
+            "optimization": true,
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2MB",
+                "maximumError": "5MB"
+              }
+            ]
+          }
+        },
+        "build-department": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "../../dist/web-components/department-overview",
+            "index": "src/index.html",
+            "browser": "src/main-department.ts",
+            "polyfills": [],
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss",
+              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css"
+            ],
+            "scripts": [],
+            "outputHashing": "none",
+            "optimization": true,
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2MB",
+                "maximumError": "5MB"
+              }
+            ]
+          }
         }
       }
     }

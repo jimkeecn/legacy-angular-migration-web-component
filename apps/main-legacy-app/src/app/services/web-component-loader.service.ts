@@ -6,13 +6,91 @@ import { environment } from "../../environments/environment";
 })
 export class WebComponentLoaderService {
   private loadedScripts = new Set<string>();
+  private loadedComponents = new Set<string>();
+
+  // Component-to-script mapping for lazy loading
+  private componentScriptMap = {
+    "investor-detail-element": {
+      path: "/investor-detail/browser/main.js",
+      styles: "/investor-detail/browser/styles.css",
+    },
+    "user-management-element": {
+      path: "/user-management/browser/main.js",
+      styles: "/user-management/browser/styles.css",
+    },
+    "department-overview-element": {
+      path: "/department-overview/browser/main.js",
+      styles: "/department-overview/browser/styles.css",
+    },
+  };
 
   /**
-   * Load the Angular 20 web component scripts
-   * @param componentName Optional name for logging purposes
-   * @returns Promise that resolves when scripts are loaded
+   * Load a specific web component on-demand
+   * @param componentName The custom element name (e.g., 'investor-detail-element')
+   * @returns Promise that resolves when component is loaded
    */
   async loadWebComponent(componentName?: string): Promise<void> {
+    // If componentName is provided, use lazy loading
+    if (componentName && this.componentScriptMap[componentName]) {
+      return this.loadComponentLazy(componentName);
+    }
+
+    // Otherwise, fall back to loading all components (legacy behavior)
+    return this.loadAllComponents();
+  }
+
+  /**
+   * Load a specific component's script bundle
+   * @param componentName The custom element name
+   */
+  private async loadComponentLazy(componentName: string): Promise<void> {
+    // Check if already loaded
+    if (this.loadedComponents.has(componentName)) {
+      console.log(`ℹ️ Component '${componentName}' already loaded`);
+      return;
+    }
+
+    try {
+      const config = this.componentScriptMap[componentName];
+      const baseUrl = environment.webComponentUrl;
+      const timestamp = new Date().getTime();
+
+      console.log(`🔄 Loading component: ${componentName}`);
+
+      // Load styles first (optional)
+      if (config.styles) {
+        await this.loadStylesheet(
+          `${componentName}-styles`,
+          `${baseUrl}${config.styles}?v=${timestamp}`,
+          true
+        );
+      }
+
+      // Load the component script
+      await this.loadScript(
+        `${componentName}-script`,
+        `${baseUrl}${config.path}?v=${timestamp}`,
+        false
+      );
+
+      // Wait for custom element to register
+      await this.waitForCustomElement(componentName, 5000);
+
+      this.loadedComponents.add(componentName);
+      console.log(`✅ Component '${componentName}' loaded and registered`);
+    } catch (err) {
+      console.error(`Failed to load component '${componentName}':`, err);
+      throw new Error(
+        `Failed to load the '${componentName}' web component. Please ensure the component server is running.`
+      );
+    }
+  }
+
+  /**
+   * Load all web components at once (original behavior)
+   * @returns Promise that resolves when scripts are loaded
+   */
+  private async loadAllComponents(): Promise<void> {
     try {
       // Always reload scripts during development
       const forceReload = !environment.production;
@@ -54,11 +132,7 @@ export class WebComponentLoaderService {
         // Wait for custom elements to register
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        console.log(
-          `✅ Web component scripts loaded${
-            componentName ? ` for ${componentName}` : ""
-          }`
-        );
+        console.log("✅ All web component scripts loaded");
       } else {
         console.log("ℹ️ Web component scripts already loaded");
       }
@@ -185,9 +259,80 @@ export class WebComponentLoaderService {
   }
 
   /**
+   * Load a stylesheet dynamically
+   * @param id Unique ID for the link element
+   * @param href Stylesheet URL
+   * @param optional If true, don't throw error if stylesheet fails to load
+   */
+  private loadStylesheet(
+    id: string,
+    href: string,
+    optional: boolean = false
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Check if already loaded
+      const existing = document.getElementById(id);
+      if (existing) {
+        console.log(`Stylesheet ${id} already loaded`);
+        resolve();
+        return;
+      }
+
+      const link = document.createElement("link");
+      link.id = id;
+      link.rel = "stylesheet";
+      link.href = href;
+
+      link.onload = () => {
+        console.log(`✅ Stylesheet loaded: ${href}`);
+        resolve();
+      };
+
+      link.onerror = (error) => {
+        console.error(`❌ Stylesheet load error: ${href}`, error);
+
+        if (optional) {
+          console.log(
+            `ℹ️ Optional stylesheet failed to load, continuing: ${href}`
+          );
+          resolve();
+        } else {
+          reject(new Error(`Failed to load required stylesheet: ${href}`));
+        }
+      };
+
+      document.head.appendChild(link);
+    });
+  }
+
+  /**
+   * Wait for a custom element to be defined
+   * @param tagName The custom element tag name
+   * @param timeout Maximum time to wait in milliseconds
+   */
+  private async waitForCustomElement(
+    tagName: string,
+    timeout: number = 5000
+  ): Promise<void> {
+    const startTime = Date.now();
+
+    while (!customElements.get(tagName)) {
+      if (Date.now() - startTime > timeout) {
+        throw new Error(
+          `Timeout waiting for custom element '${tagName}' to be defined`
+        );
+      }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    console.log(`✅ Custom element '${tagName}' is defined`);
+  }
+
+  /**
    * Reset the service state (useful for testing)
    */
   reset(): void {
     this.loadedScripts.clear();
+    this.loadedComponents.clear();
   }
 }

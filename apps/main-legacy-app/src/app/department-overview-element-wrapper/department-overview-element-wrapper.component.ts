@@ -204,8 +204,10 @@ export class DepartmentOverviewElementWrapperComponent
       this.loading = true;
       this.error = null;
 
-      // Use the shared service to load web component scripts
-      await this.webComponentLoader.loadWebComponent("department-overview");
+      // Use lazy loading for this specific component
+      await this.webComponentLoader.loadWebComponent(
+        "department-overview-element"
+      );
 
       // Verify custom element is defined
       this.webComponentLoader.isCustomElementDefined(

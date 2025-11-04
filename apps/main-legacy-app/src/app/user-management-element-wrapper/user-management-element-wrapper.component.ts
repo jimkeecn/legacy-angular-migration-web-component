@@ -185,8 +185,8 @@ export class UserManagementElementWrapperComponent
       this.loading = true;
       this.error = null;
 
-      // Use the shared service to load web component scripts
-      await this.webComponentLoader.loadWebComponent("user-management");
+      // Use lazy loading for this specific component
+      await this.webComponentLoader.loadWebComponent("user-management-element");
 
       // Verify custom element is defined
       this.webComponentLoader.isCustomElementDefined("user-management-element");
