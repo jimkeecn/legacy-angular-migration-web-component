@@ -1,4 +1,4 @@
-# Run Angular 20 Web Component (investor-detail-element)
+# Run Angular 20 Web Component (web-components)
 # Usage: ./start-element.ps1
 
 Write-Host "Starting Angular 20 Web Component..." -ForegroundColor Green
@@ -6,13 +6,13 @@ Write-Host "Node version required: 24.8.0" -ForegroundColor Yellow
 Write-Host ""
 
 # Check if running from correct directory
-if (-not (Test-Path "apps/investor-detail-element")) {
+if (-not (Test-Path "apps/web-components")) {
     Write-Host "Error: Please run this script from the workspace root" -ForegroundColor Red
     exit 1
 }
 
 # Change to app directory
-Set-Location "apps/investor-detail-element"
+Set-Location "apps/web-components"
 
 # Check Node version
 $nodeVersion = node --version

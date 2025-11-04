@@ -24,7 +24,7 @@ This project demonstrates a gradual migration strategy from Angular 10 to Angula
 │  │  │  - Handles routing & navigation      │             │  │
 │  │  └──────────────────────────────────────┘             │  │
 │  │                    ↓                                   │  │
-│  │       <investor-detail-element                         │  │
+│  │       <web-components                         │  │
 │  │         [investor-data]="jsonData">                    │  │
 │  └───────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
@@ -35,7 +35,7 @@ This project demonstrates a gradual migration strategy from Angular 10 to Angula
 │          Angular 20 Web Component (Custom Element)          │
 │                      (Port 4201)                            │
 │  ┌───────────────────────────────────────────────────────┐  │
-│  │  <investor-detail-element>                            │  │
+│  │  <web-components>                            │  │
 │  │    - Standalone Component                             │  │
 │  │    - Shadow DOM Encapsulation                         │  │
 │  │    - Receives data via @Input('investor-data')        │  │
@@ -63,8 +63,8 @@ apps/main-legacy-app/
 │   │   │   └── investor-lookup.component.ts
 │   │   ├── investor-detail/
 │   │   │   └── investor-detail-legacy.component.ts
-│   │   ├── investor-detail-element-wrapper/
-│   │   │   └── investor-detail-element-wrapper.component.ts
+│   │   ├── web-components-wrapper/
+│   │   │   └── web-components-wrapper.component.ts
 │   │   ├── services/
 │   │   │   └── investor.service.ts
 │   │   ├── app.module.ts
@@ -88,7 +88,7 @@ export class InvestorService {
 }
 ```
 
-**`investor-detail-element-wrapper.component.ts`** - Web Component Host
+**`web-components-wrapper.component.ts`** - Web Component Host
 
 - Loads Angular 20 scripts dynamically
 - Fetches investor data from service
@@ -102,12 +102,12 @@ export class InvestorService {
 
 ---
 
-### 2. Angular 20 Web Component (`apps/investor-detail-element`)
+### 2. Angular 20 Web Component (`apps/web-components`)
 
 #### Structure
 
 ```
-apps/investor-detail-element/
+apps/web-components/
 ├── src/
 │   ├── app/
 │   │   ├── services/
@@ -133,7 +133,7 @@ import { AppComponent } from "./app/app.component";
   const element = createCustomElement(AppComponent, {
     injector: app.injector,
   });
-  customElements.define("investor-detail-element", element);
+  customElements.define("web-components", element);
 })();
 ```
 
@@ -159,7 +159,7 @@ InvestorDetail object
     ↓
 JSON.stringify(data)
     ↓
-<investor-detail-element [investor-data]="jsonString">
+<web-components [investor-data]="jsonString">
     ↓
 Web Component @Input setter
     ↓
@@ -217,7 +217,7 @@ async loadWebComponent() {
 })
 ```
 
-This allows Angular 10 to accept the `<investor-detail-element>` tag without errors.
+This allows Angular 10 to accept the `<web-components>` tag without errors.
 
 ---
 
@@ -254,7 +254,7 @@ This allows Angular 10 to accept the `<investor-detail-element>` tag without err
 
 ```json
 {
-  "outputPath": "../../dist/investor-detail-element",
+  "outputPath": "../../dist/web-components",
   "builder": "@angular-devkit/build-angular:application"
 }
 ```
@@ -262,7 +262,7 @@ This allows Angular 10 to accept the `<investor-detail-element>` tag without err
 **Output Structure:**
 
 ```
-dist/investor-detail-element/
+dist/web-components/
 ├── browser/
 │   ├── main.js
 │   ├── polyfills.js
@@ -278,7 +278,7 @@ dist/investor-detail-element/
   "scripts": {
     "build:dev": "ng build --configuration development",
     "build:watch": "ng build --watch --configuration development",
-    "serve:dist": "http-server ../../dist/investor-detail-element -p 4201 --cors"
+    "serve:dist": "http-server ../../dist/web-components -p 4201 --cors"
   },
   "dependencies": {
     "@angular/core": "^20.0.0",
@@ -295,19 +295,19 @@ dist/investor-detail-element/
 ### Terminal 1: Angular 20 Build Watch
 
 ```bash
-cd apps/investor-detail-element
+cd apps/web-components
 nvm use 24.8.0
 npm run build:watch
 ```
 
 - Watches for file changes
 - Rebuilds automatically
-- Outputs to `dist/investor-detail-element/browser/`
+- Outputs to `dist/web-components/browser/`
 
 ### Terminal 2: Angular 20 File Server
 
 ```bash
-cd apps/investor-detail-element
+cd apps/web-components
 nvm use 24.8.0
 npm run serve:dist
 ```

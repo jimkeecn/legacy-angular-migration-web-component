@@ -14,9 +14,9 @@ import { provideAnimations } from "@angular/platform-browser/animations";
       injector: app.injector,
     });
 
-    customElements.define("investor-detail-element", investorDetailElement);
+    customElements.define("web-components", investorDetailElement);
     console.log("✅ Investor Detail Web Component registered");
   } catch (error) {
-    console.error("❌ Failed to register investor-detail-element:", error);
+    console.error("❌ Failed to register web-components:", error);
   }
 })();

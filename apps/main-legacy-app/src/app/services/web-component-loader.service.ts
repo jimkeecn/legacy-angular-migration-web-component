@@ -10,7 +10,7 @@ export class WebComponentLoaderService {
 
   // Component-to-script mapping for lazy loading
   private componentScriptMap = {
-    "investor-detail-element": {
+    "web-components": {
       path: "/investor-detail/browser/main.js",
       styles: "/investor-detail/browser/styles.css",
     },
@@ -26,7 +26,7 @@ export class WebComponentLoaderService {
 
   /**
    * Load a specific web component on-demand
-   * @param componentName The custom element name (e.g., 'investor-detail-element')
+   * @param componentName The custom element name (e.g., 'web-components')
    * @returns Promise that resolves when component is loaded
    */
   async loadWebComponent(componentName?: string): Promise<void> {

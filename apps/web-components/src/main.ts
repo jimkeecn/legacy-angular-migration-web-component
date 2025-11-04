@@ -33,7 +33,7 @@ import { provideAnimations } from "@angular/platform-browser/animations";
     );
 
     // Define the custom elements
-    customElements.define("investor-detail-element", investorDetailElement);
+    customElements.define("web-components", investorDetailElement);
     customElements.define("user-management-element", userManagementElement);
     customElements.define(
       "department-overview-element",

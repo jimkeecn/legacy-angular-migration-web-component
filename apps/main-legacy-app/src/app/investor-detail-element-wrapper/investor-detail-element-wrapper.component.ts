@@ -10,7 +10,7 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
 import { WebComponentLoaderService } from "../services/web-component-loader.service";
 
 @Component({
-  selector: "app-investor-detail-element-wrapper",
+  selector: "app-web-components-wrapper",
   template: `
     <div class="wrapper-container">
       <div class="wrapper-header">
@@ -39,11 +39,8 @@ import { WebComponentLoaderService } from "../services/web-component-loader.serv
       </div>
 
       <!-- Web Component will be rendered here -->
-      <investor-detail-element
-        *ngIf="!loading && !error && investorData"
-        #webComponent
-      >
-      </investor-detail-element>
+      <web-components *ngIf="!loading && !error && investorData" #webComponent>
+      </web-components>
     </div>
   `,
   styles: [
@@ -142,7 +139,7 @@ import { WebComponentLoaderService } from "../services/web-component-loader.serv
         background-color: #dc2626;
       }
 
-      investor-detail-element {
+      web-components {
         display: block;
         margin: 20px 0;
       }
@@ -195,10 +192,10 @@ export class InvestorDetailElementWrapperComponent
       this.error = null;
 
       // Use lazy loading for this specific component
-      await this.webComponentLoader.loadWebComponent("investor-detail-element");
+      await this.webComponentLoader.loadWebComponent("web-components");
 
       // Verify custom element is defined
-      this.webComponentLoader.isCustomElementDefined("investor-detail-element");
+      this.webComponentLoader.isCustomElementDefined("web-components");
 
       this.loading = false;
 
@@ -236,7 +233,7 @@ export class InvestorDetailElementWrapperComponent
   private setInvestorDataOnElement() {
     // Use the shared service to set data on the element
     this.webComponentLoader.setElementData(
-      "investor-detail-element",
+      "web-components",
       "investorData",
       this.investorDataJson
     );

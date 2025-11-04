@@ -123,19 +123,19 @@ apps/
 │   │   └── services/
 │   └── dist/main-legacy-app/ # Production build output
 │
-└── investor-detail-element/  # Angular 20 web components
+└── web-components/  # Angular 20 web components
     ├── src/app/
-    │   ├── investor-detail-element/
+    │   ├── web-components/
     │   ├── user-management-element/
     │   └── department-overview-element/
-    └── dist/investor-detail-element/ # Production build output
+    └── dist/web-components/ # Production build output
 ```
 
 ## Web Component Registration
 
 Three custom elements registered in Angular 20:
 
-- `<investor-detail-element>`
+- `<web-components>`
 - `<user-management-element>`
 - `<department-overview-element>`
 
