@@ -14,8 +14,11 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
   template: `
     <div class="wrapper-container">
       <div class="wrapper-header">
+        <button (click)="goBack()" class="back-btn">← Back to Lookup</button>
         <h2>Investor Details (Angular 20 Web Component)</h2>
-        <button (click)="goBack()">← Back to Lookup</button>
+        <button (click)="switchToLegacy()" class="switch-btn">
+          Switch to Angular 10 ⚡
+        </button>
       </div>
 
       <div class="new-banner">
@@ -41,12 +44,6 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
         #webComponent
       >
       </investor-detail-element>
-
-      <div class="actions" *ngIf="!loading && !error">
-        <button (click)="viewLegacyVersion()" class="btn-legacy">
-          View Legacy Version (Angular 10)
-        </button>
-      </div>
     </div>
   `,
   styles: [
@@ -61,11 +58,35 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
+        gap: 15px;
       }
 
       .wrapper-header h2 {
+        flex: 1;
         margin: 0;
         color: #1e3a8a;
+        text-align: center;
+      }
+
+      .back-btn {
+        flex-shrink: 0;
+        background-color: #6b7280;
+        padding: 10px 20px;
+      }
+
+      .back-btn:hover {
+        background-color: #4b5563;
+      }
+
+      .switch-btn {
+        flex-shrink: 0;
+        background-color: #f59e0b;
+        padding: 10px 20px;
+        font-weight: bold;
+      }
+
+      .switch-btn:hover {
+        background-color: #d97706;
       }
 
       .new-banner {
@@ -121,19 +142,6 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
         background-color: #dc2626;
       }
 
-      .actions {
-        margin-top: 30px;
-        text-align: center;
-      }
-
-      .btn-legacy {
-        background-color: #f59e0b;
-      }
-
-      .btn-legacy:hover {
-        background-color: #d97706;
-      }
-
       investor-detail-element {
         display: block;
         margin: 20px 0;
@@ -160,7 +168,7 @@ export class InvestorDetailElementWrapperComponent
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
+    this.route.parent?.params.subscribe((params) => {
       this.investorId = params["id"];
 
       // Load investor data from service
@@ -172,14 +180,6 @@ export class InvestorDetailElementWrapperComponent
         if (this.investorData) {
           // Convert to JSON string for passing to web component
           this.investorDataJson = JSON.stringify(this.investorData);
-          console.log(
-            "✅ Investor data loaded from Angular 10:",
-            this.investorData.name
-          );
-          console.log(
-            "📤 Sending to web component (JSON):",
-            this.investorDataJson
-          );
         } else {
           this.error = `Investor not found with ID: ${this.investorId}`;
         }
@@ -196,10 +196,8 @@ export class InvestorDetailElementWrapperComponent
 
       // Always reload scripts during development (comment out for production)
       const forceReload = !environment.production;
-      
-      if (!this.scriptLoaded || forceReload) {
-        console.log("Loading Angular 20 web component...");
 
+      if (!this.scriptLoaded || forceReload) {
         // Angular 20's new application builder outputs to browser/ subfolder
         const baseUrl = environment.webComponentUrl;
         const timestamp = new Date().getTime();
@@ -221,10 +219,12 @@ export class InvestorDetailElementWrapperComponent
         }
 
         // Load the main application file with cache busting
-        await this.loadScript("wc-main", `${baseUrl}/browser/main.js?v=${timestamp}`);
+        await this.loadScript(
+          "wc-main",
+          `${baseUrl}/browser/main.js?v=${timestamp}`
+        );
 
         this.scriptLoaded = true;
-        console.log("Angular 20 web component loaded successfully");
 
         // Wait longer for custom element to fully register
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -285,10 +285,10 @@ export class InvestorDetailElementWrapperComponent
     this.router.navigate(["/investor-lookup"]);
   }
 
-  viewLegacyVersion() {
-    this.router.navigate(["/investor-detail"], {
-      queryParams: { id: this.investorId },
-    });
+  switchToLegacy() {
+    if (this.investorId) {
+      this.router.navigate(["/investor-detail", this.investorId, "legacy"]);
+    }
   }
 
   retry() {
@@ -307,13 +307,8 @@ export class InvestorDetailElementWrapperComponent
     const element = document.querySelector("investor-detail-element");
 
     if (element) {
-      console.log("🔧 Element found:", element);
-      console.log("🔧 Element tag:", element.tagName);
-
       if (this.investorDataJson) {
         // Try multiple approaches to set the data
-        console.log("🔧 Attempting to set investorData property");
-        console.log("🔧 Data to set:", this.investorDataJson);
 
         // Approach 1: Direct property (camelCase)
         (element as any)["investorData"] = this.investorDataJson;
@@ -323,19 +318,6 @@ export class InvestorDetailElementWrapperComponent
 
         // Approach 3: setAttribute
         element.setAttribute("investor-data", this.investorDataJson);
-
-        console.log(
-          "📊 investorData property:",
-          (element as any)["investorData"]
-        );
-        console.log(
-          "📊 investor-data property:",
-          (element as any)["investor-data"]
-        );
-        console.log(
-          "📊 investor-data attribute:",
-          element.getAttribute("investor-data")
-        );
       }
     } else {
       console.warn("⚠️ Element not found in DOM");

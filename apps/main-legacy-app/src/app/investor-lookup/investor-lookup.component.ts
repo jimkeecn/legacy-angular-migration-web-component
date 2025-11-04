@@ -223,8 +223,6 @@ export class InvestorLookupComponent implements OnInit {
   }
 
   viewDetails(investorId: string, version: "legacy" | "new") {
-    const route =
-      version === "legacy" ? "/investor-detail" : "/investor-detail-new";
-    this.router.navigate([route], { queryParams: { id: investorId } });
+    this.router.navigate(["/investor-detail", investorId, version]);
   }
 }

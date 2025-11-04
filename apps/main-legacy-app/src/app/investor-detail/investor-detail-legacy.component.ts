@@ -7,8 +7,11 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
   template: `
     <div class="container">
       <div class="header">
+        <button (click)="goBack()" class="back-btn">← Back to Lookup</button>
         <h2>Investor Details (Legacy Angular 10)</h2>
-        <button (click)="goBack()">← Back to Lookup</button>
+        <button (click)="switchToNew()" class="switch-btn">
+          Switch to Angular 20 🚀
+        </button>
       </div>
 
       <div class="legacy-banner">
@@ -61,12 +64,6 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
             <span>{{ investor.joinDate }}</span>
           </div>
         </div>
-
-        <div class="actions">
-          <button (click)="viewNewVersion()">
-            Try New Version (Angular 20) 🚀
-          </button>
-        </div>
       </div>
 
       <div class="error" *ngIf="!investor">
@@ -86,11 +83,35 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
+        gap: 15px;
       }
 
       .header h2 {
+        flex: 1;
         margin: 0;
         color: #1e3a8a;
+        text-align: center;
+      }
+
+      .back-btn {
+        flex-shrink: 0;
+        background-color: #6b7280;
+        padding: 10px 20px;
+      }
+
+      .back-btn:hover {
+        background-color: #4b5563;
+      }
+
+      .switch-btn {
+        flex-shrink: 0;
+        background-color: #10b981;
+        padding: 10px 20px;
+        font-weight: bold;
+      }
+
+      .switch-btn:hover {
+        background-color: #059669;
       }
 
       .legacy-banner {
@@ -159,21 +180,6 @@ import { InvestorService, InvestorDetail } from "../services/investor.service";
         font-weight: bold;
       }
 
-      .actions {
-        margin-top: 30px;
-        text-align: center;
-      }
-
-      .actions button {
-        background-color: #10b981;
-        padding: 14px 28px;
-        font-size: 16px;
-      }
-
-      .actions button:hover {
-        background-color: #059669;
-      }
-
       .error {
         text-align: center;
         padding: 40px;
@@ -195,7 +201,7 @@ export class InvestorDetailLegacyComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
+    this.route.parent?.params.subscribe((params) => {
       this.investorId = params["id"];
       if (this.investorId) {
         this.loadInvestorDetails(this.investorId);
@@ -211,9 +217,9 @@ export class InvestorDetailLegacyComponent implements OnInit {
     this.router.navigate(["/investor-lookup"]);
   }
 
-  viewNewVersion() {
-    this.router.navigate(["/investor-detail-new"], {
-      queryParams: { id: this.investorId },
-    });
+  switchToNew() {
+    if (this.investorId) {
+      this.router.navigate(["/investor-detail", this.investorId, "new"]);
+    }
   }
 }

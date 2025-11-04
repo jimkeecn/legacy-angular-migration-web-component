@@ -261,32 +261,15 @@ export class AppComponent implements OnInit, OnChanges {
 
   investor: InvestorDetail | undefined;
 
-  constructor() {
-    console.log("🔵 AppComponent constructor called");
-  }
+  constructor() {}
 
   ngOnInit() {
-    console.log("🔵 ngOnInit called");
-    console.log("🔵 investorData received:", this.investorData);
-
     // Process the investor data
     this.processInvestorData();
-
-    if (!this.investor) {
-      console.warn("⚠️ No investor data received from parent");
-    } else {
-      console.log("✅ Investor loaded in ngOnInit:", this.investor.name);
-    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("🔵 ngOnChanges called", changes);
-
     if (changes["investorData"]) {
-      console.log(
-        "🔵 investorData changed:",
-        changes["investorData"].currentValue
-      );
       this.processInvestorData();
     }
   }
@@ -297,20 +280,11 @@ export class AppComponent implements OnInit, OnChanges {
     if (typeof value === "string") {
       try {
         this.investor = JSON.parse(value);
-        console.log(
-          "✅ Investor data received from parent (Angular 10):",
-          this.investor?.name
-        );
       } catch (e) {
-        console.error("❌ Failed to parse investor data:", e);
-        console.error("Raw value:", value);
+        // Failed to parse investor data
       }
     } else if (value) {
       this.investor = value;
-      console.log(
-        "✅ Investor data received from parent (Angular 10):",
-        this.investor?.name
-      );
     }
   }
 }
