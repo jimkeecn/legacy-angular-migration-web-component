@@ -27,6 +27,13 @@ import { Router } from "@angular/router";
           <button class="card-btn">Manage Users →</button>
         </div>
 
+        <div class="feature-card" (click)="navigateTo('/department-overview')">
+          <div class="card-icon">🏛️</div>
+          <h3>Department Overview</h3>
+          <p>Explore organizational structure with ng-zorro tree view</p>
+          <button class="card-btn">View Departments →</button>
+        </div>
+
         <div class="feature-card demo-card">
           <div class="card-icon">⚡</div>
           <h3>Version Comparison</h3>
@@ -70,6 +77,10 @@ import { Router } from "@angular/router";
             <a (click)="navigateTo('/user-management')" class="quick-link">
               <span class="link-icon">👥</span>
               <span>User Management</span>
+            </a>
+            <a (click)="navigateTo('/department-overview')" class="quick-link">
+              <span class="link-icon">🏛️</span>
+              <span>Department Overview</span>
             </a>
             <a (click)="navigateTo('/login')" class="quick-link">
               <span class="link-icon">🔐</span>

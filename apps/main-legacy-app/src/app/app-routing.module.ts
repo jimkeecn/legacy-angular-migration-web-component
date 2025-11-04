@@ -7,6 +7,8 @@ import { InvestorDetailLegacyComponent } from "./investor-detail/investor-detail
 import { InvestorDetailElementWrapperComponent } from "./investor-detail-element-wrapper/investor-detail-element-wrapper.component";
 import { UserManagementWrapperComponent } from "./user-management-wrapper/user-management-wrapper.component";
 import { UserManagementElementWrapperComponent } from "./user-management-element-wrapper/user-management-element-wrapper.component";
+import { DepartmentOverviewWrapperComponent } from "./department-overview-wrapper/department-overview-wrapper.component";
+import { DepartmentOverviewElementWrapperComponent } from "./department-overview-element-wrapper/department-overview-element-wrapper.component";
 
 const routes: Routes = [
   { path: "", component: HomeComponent, pathMatch: "full" },
@@ -18,6 +20,14 @@ const routes: Routes = [
       { path: "", redirectTo: "legacy", pathMatch: "full" },
       { path: "legacy", component: UserManagementWrapperComponent },
       { path: "new", component: UserManagementElementWrapperComponent },
+    ],
+  },
+  {
+    path: "department-overview",
+    children: [
+      { path: "", redirectTo: "legacy", pathMatch: "full" },
+      { path: "legacy", component: DepartmentOverviewWrapperComponent },
+      { path: "new", component: DepartmentOverviewElementWrapperComponent },
     ],
   },
   {

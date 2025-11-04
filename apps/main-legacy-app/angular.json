@@ -27,7 +27,8 @@
             "styles": [
               "src/styles.scss",
               "node_modules/ag-grid-community/dist/styles/ag-grid.css",
-              "node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css"
+              "node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css",
+              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css"
             ],
             "scripts": []
           },

@@ -39,6 +39,14 @@ import { Component } from "@angular/core";
               <span class="nav-icon">👥</span>
               <span class="nav-text">Users</span>
             </a>
+            <a
+              routerLink="/department-overview"
+              routerLinkActive="active"
+              class="nav-link"
+            >
+              <span class="nav-icon">🏛️</span>
+              <span class="nav-text">Departments</span>
+            </a>
             <a routerLink="/login" routerLinkActive="active" class="nav-link">
               <span class="nav-icon">🔐</span>
               <span class="nav-text">Login</span>
