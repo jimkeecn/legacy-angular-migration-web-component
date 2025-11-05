@@ -30,6 +30,12 @@ export class WebComponentLoaderService {
    * @returns Promise that resolves when component is loaded
    */
   async loadWebComponent(componentName?: string): Promise<void> {
+    // In development mode, always load all components together from main.js
+    if ((environment as any).devMode) {
+      console.log("🔧 Development mode: Loading all components from main.js");
+      return this.loadAllComponents();
+    }
+
     // If componentName is provided, use lazy loading
     if (componentName && this.componentScriptMap[componentName]) {
       return this.loadComponentLazy(componentName);

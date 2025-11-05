@@ -38,18 +38,46 @@ Proof-of-concept for migrating Angular 10 to Angular 20 using Web Components.
 
 ## Quick Start
 
-### Development Mode (All Components)
+### Prerequisites
+
+Install required Node.js versions using NVM:
 
 ```bash
-# Terminal 1 - Start Angular 10 legacy app
-npm run start:legacy
+nvm install 14.21.3
+nvm install 24.8.0
+```
 
-# Terminal 2 - Start Angular 20 web components (all in one bundle)
-npm run start:element
+### Development Mode
+
+**Terminal 1 - Web Components (Node 24):**
+
+```bash
+cd apps/web-components
+npm run dev
+```
+
+**Terminal 2 - Serve Web Components:**
+
+```bash
+npm run serve:dev
+```
+
+**Terminal 3 - Legacy App (Node 14):**
+
+```bash
+# Switch to Node 14 first
+.\switch-node.ps1 legacy
+
+# Or manually:
+nvm use 14.21.3
+
+# Then start the app
+cd apps/main-legacy-app
+npm start
 ```
 
 - Legacy app: http://localhost:4200
-- Web components: http://localhost:4201
+- Web components: http://localhost:4205/dev
 
 ### Production Build (All Components)
 
@@ -108,8 +136,22 @@ npm run serve:lazy:legacy
 
 ### Node Version Management
 
-- Use `NODE_OPTIONS=--openssl-legacy-provider` for Angular 10 production builds
-- Switch Node versions as needed (nvm)
+**Required Versions:**
+
+- Angular 10 (Legacy App): Node 14.21.3
+- Angular 20 (Web Components): Node 24.8.0
+
+**Quick Switch:**
+
+```bash
+# For Legacy App
+.\switch-node.ps1 legacy    # or: nvm use 14.21.3
+
+# For Web Components
+.\switch-node.ps1 modern    # or: nvm use 24.8.0
+```
+
+**Note:** Use `NODE_OPTIONS=--openssl-legacy-provider` for Angular 10 production builds
 
 ## Project Structure
 

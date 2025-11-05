@@ -18,7 +18,7 @@ import { InvestorDetail } from "./services/investor-data.service";
   template: `
     <div class="component-container">
       <div class="header-banner">
-        <span>🚀 Powered by Angular 20 (Web Component)</span>
+        <span>🚀 Powered by Angular 20 AAAAA (Web Component)</span>
       </div>
 
       <div class="detail-card" *ngIf="investor">

@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 4200",
-    "build": "ng build",
+    "build": "SET NODE_OPTIONS=--openssl-legacy-provider && ng build",
     "test": "ng test",
     "lint": "ng lint"
   },
