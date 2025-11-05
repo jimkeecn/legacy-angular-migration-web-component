@@ -99,7 +99,8 @@ export class WebComponentLoaderService {
   private async loadAllComponents(): Promise<void> {
     try {
       // Always reload scripts during development
-      const forceReload = !environment.production;
+      const forceReload =
+        !environment.production || (environment as any).devMode;
 
       if (this.loadedScripts.size === 0 || forceReload) {
         const baseUrl = environment.webComponentUrl;
@@ -108,25 +109,11 @@ export class WebComponentLoaderService {
         // Remove old scripts if they exist (for reload)
         if (forceReload) {
           this.removeExistingScripts();
-        }
-
-        // With zone.js removed from Angular 20 build, we only need main.js
-        // The polyfills.js might still exist but should be empty or minimal
-        // We'll try to load it but continue if it fails
-        try {
-          await this.loadScript(
-            "wc-polyfills",
-            `${baseUrl}/browser/polyfills.js?v=${timestamp}`,
-            true // optional - don't fail if missing
-          );
-          console.log("✅ Polyfills loaded (if present)");
-        } catch (e) {
-          console.log(
-            "ℹ️ No polyfills file or already loaded (expected after zone.js removal)"
-          );
+          this.loadedScripts.clear(); // Clear the tracking set in dev mode
         }
 
         // Load the main application file (required)
+        // Note: No polyfills needed - zoneless mode
         await this.loadScript(
           "wc-main",
           `${baseUrl}/browser/main.js?v=${timestamp}`,
@@ -134,9 +121,6 @@ export class WebComponentLoaderService {
         );
 
         this.loadedScripts.add("wc-main");
-
-        // Wait for custom elements to register
-        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         console.log("✅ All web component scripts loaded");
       } else {
@@ -162,12 +146,20 @@ export class WebComponentLoaderService {
     optional: boolean = false
   ): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Check if already loaded
+      // In dev mode, remove existing script first to force reload
       const existing = document.getElementById(id);
       if (existing) {
-        console.log(`Script ${id} already loaded`);
-        resolve();
-        return;
+        const isDevMode = (environment as any).devMode;
+        if (isDevMode) {
+          console.log(
+            `🔄 Dev mode: Removing existing script ${id} to force reload`
+          );
+          existing.remove();
+        } else {
+          console.log(`Script ${id} already loaded`);
+          resolve();
+          return;
+        }
       }
 
       const script = document.createElement("script");
@@ -200,15 +192,11 @@ export class WebComponentLoaderService {
    * Remove existing web component scripts from DOM
    */
   private removeExistingScripts(): void {
-    const scriptIds = ["wc-polyfills", "wc-main"];
-    scriptIds.forEach((id) => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.remove();
-        this.loadedScripts.delete(id);
-        console.log(`🗑️ Removed script: ${id}`);
-      }
-    });
+    const element = document.getElementById("wc-main");
+    if (element) {
+      element.remove();
+      console.log(`🗑️ Removed script: wc-main`);
+    }
   }
 
   /**
