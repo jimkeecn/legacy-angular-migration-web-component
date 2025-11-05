@@ -1,13 +1,14 @@
 import { createCustomElement } from "@angular/elements";
 import { createApplication } from "@angular/platform-browser";
+import { provideZonelessChangeDetection } from "@angular/core";
 import { AppComponent } from "./app/app.component";
 import { provideAnimations } from "@angular/platform-browser/animations";
 
-// Investor Detail Web Component - Standalone Bundle
+// Investor Detail Web Component - Standalone Bundle (Zoneless)
 (async () => {
   try {
     const app = await createApplication({
-      providers: [provideAnimations()],
+      providers: [provideZonelessChangeDetection(), provideAnimations()],
     });
 
     const investorDetailElement = createCustomElement(AppComponent, {

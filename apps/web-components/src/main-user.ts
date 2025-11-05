@@ -1,13 +1,14 @@
 import { createCustomElement } from "@angular/elements";
 import { createApplication } from "@angular/platform-browser";
+import { provideZonelessChangeDetection } from "@angular/core";
 import { UserManagementElementComponent } from "./app/user-management-element/user-management-element.component";
 import { provideAnimations } from "@angular/platform-browser/animations";
 
-// User Management Web Component - Standalone Bundle
+// User Management Web Component - Standalone Bundle (Zoneless)
 (async () => {
   try {
     const app = await createApplication({
-      providers: [provideAnimations()],
+      providers: [provideZonelessChangeDetection(), provideAnimations()],
     });
 
     const userManagementElement = createCustomElement(

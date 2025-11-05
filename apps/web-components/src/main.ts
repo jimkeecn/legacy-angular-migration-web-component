@@ -1,16 +1,17 @@
 import { createCustomElement } from "@angular/elements";
 import { createApplication } from "@angular/platform-browser";
+import { provideZonelessChangeDetection } from "@angular/core";
 import { AppComponent } from "./app/app.component";
 import { UserManagementElementComponent } from "./app/user-management-element/user-management-element.component";
 import { DepartmentOverviewElementComponent } from "./app/department-overview-element/department-overview-element.component";
 import { provideAnimations } from "@angular/platform-browser/animations";
 
-// Modern Angular 20 approach using standalone components and createApplication
+// Modern Angular 20 approach using standalone components and createApplication (Zoneless)
 (async () => {
   try {
     // Create the application
     const app = await createApplication({
-      providers: [provideAnimations()],
+      providers: [provideZonelessChangeDetection(), provideAnimations()],
     });
 
     // Create the custom elements
